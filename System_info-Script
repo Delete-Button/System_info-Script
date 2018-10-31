@@ -51,9 +51,23 @@ netinfo() {
 	ifconfig -a 
 	}
 operating() { 
-	echo '' 
-	uname -a 
-	echo '' 
+	echo 'Kernel Info, MacOs Info, or both (k, m, b)'
+	read dk 
+	if [ "$dk" = "k" ];then 
+		echo '' 
+		uname -a 
+		echo ''
+	elif [ "$dk" = "m" ]; then 
+		system_profiler SPSoftwareDataType
+	elif [ "$dk" = "b" ];then	
+		echo '' 
+		uname -a 
+		echo ''
+		system_profiler SPSoftwareDataType
+		echo ''
+	else	
+		echo 'Invalid'
+	fi
 	}
 diskinfo() { 
 	df 
@@ -99,11 +113,28 @@ netaddy1() {
 	fi
 	ifconfig $input | grep "$grepsearch"
 	}
-while true; do
-	menu
-	read int
-	questions "$int"
-	echo 'Do you want the questions again? (yes or no)' 
-	read tni
-	ending "$tni"
-done
+system_profiler SPSoftwareDataType | grep "Com"
+system_profiler SPSoftwareDataType | grep "System V"
+echo ''
+uname 
+uname -r 
+echo ''
+ifconfig en0 | grep "inet " 
+echo ''
+echo 'Do you want more information? (yes or no)'  
+read yeah
+if [ "$yeah" = "yes" ];then 
+	clear
+	while true; do
+		menu
+		read int
+		questions "$int"
+		echo 'Do you want the questions again? (yes or no)' 
+		read tni
+		ending "$tni"
+	done
+elif [ "$yeah" = "no" ];then 
+	echo 'Bye'
+else 
+	echo 'Invalid response'
+fi
