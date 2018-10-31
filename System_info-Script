@@ -1,0 +1,109 @@
+#bin/bash!
+menu() {
+	echo 'What do you want to know?'
+	echo 'Network Info (en0)'
+	echo 'System Info (system)'
+	echo 'Connection (connection)'
+	echo 'Network Address (netaddy)'
+	echo 'Stop this bullshit (end)'
+	}
+stoop() { 
+	exit 
+}
+networking() {
+	if [ "$1" = "en0" ];then 
+		echo 'For which Interface?'
+		ifconfig -l
+		read inf
+		ifconfig $inf
+	elif [ "$1" = "connection" ];then	
+		traceroute www.google.com
+	else 
+		echo 'Invalid Option'
+	fi
+	}
+systeminfo() {
+	echo 'What do you want to know?'
+	echo 'Full Network Configuration (network)'
+	echo 'Hardware Information (hwinfo)'
+	echo 'Kernel / Operating System Info (osinfo)'
+	echo 'Disk Information (diskinfo)'
+	echo 'Stop this bullshit (end)'
+	read input2
+	if [ "$input2" = "network" ];then 
+		netinfo
+	elif [ "$input2" = "hwinfo" ];then
+		hardware
+	elif [ "$input2" = "osinfo" ];then
+		operating
+	elif [ "$input2" = "diskinfo" ];then
+		diskinfo
+	elif [ "$input2" = "end" ];then 
+		stoop
+	else 
+		echo 'Invalid'
+	fi
+	}
+hardware() { 
+	system_profiler SPHardwareDataType 
+	}
+netinfo() { 
+	ifconfig -a 
+	}
+operating() { 
+	echo '' 
+	uname -a 
+	echo '' 
+	}
+diskinfo() { 
+	df 
+	}
+questions() {
+	if [ "$1" = "en0" ];then
+        	networking "$1"
+	elif [ "$1" = "system" ];then
+       		 systeminfo
+	elif [ "$1" = "connection" ];then
+			networking "$1"
+	elif [ "$1" = "netaddy" ];then
+			netaddy1 
+	elif [ "$1" = "end" ];then
+		stoop
+	else 
+		echo 'Invalid'
+	fi
+	}
+ending() {
+	if [ "$1" = "yes" ]; then
+		clear
+	elif [ "$1" = "no" ]; then
+		stoop
+	else 
+		echo 'Invalid'
+	fi
+	}	
+netaddy1() {
+	echo 'For which input?'
+	ifconfig -l
+	read input
+	echo 'IPV4 or IPV6 (4 or 6)'
+	read input1
+	grepsearch=""
+	if [ "$input1" = "4" ];then
+		grepsearch="inet "
+	elif [ "$input1" = "6" ]; then
+		grepsearch="inet6"
+	else	
+		echo 'Invalid choice, defaulting to IPV4'
+		grepsearch="inet "
+	fi
+	ifconfig $input | grep "$grepsearch"
+	}
+while true; do
+	menu
+	read int
+	questions "$int"
+	echo 'Do you want the questions again? (yes or no)' 
+	read tni
+	ending "$tni"
+done
